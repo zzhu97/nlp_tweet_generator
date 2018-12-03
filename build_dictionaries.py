@@ -1,6 +1,7 @@
 #File used to build likelihood and probability tables. Takes properly formatted POS textfile and builds tables off that. Writes values to a textfile.
 #Input format is: python3 corpus.pos (or corpus.txt, etc...)
-#Can add "start" after args to build (reset) dictionaries from scratch
+#Can add "start" after args to build (reset) dictionaries from scratch. 
+    #ONLY DO THIS when compiling everything for the first time, or if dictionaries are messed up.
 
 import sys
 
@@ -98,8 +99,8 @@ def write_dictionaries():
 
 def main():
     #If "start" is added as an arg after python3 build_dictionaries.py corpus.txt, build dicts from stratch
+    #ONLY DO THIS when compiling everything for the first time, or if dictionaries are messed up.
 
-    print("%s %s %s\n" % (sys.argv[0], sys.argv[1], sys.argv[2]))
     build_likelihood(sys.argv[1])
     build_transitions(sys.argv[1])
     if (len(sys.argv) > 2):
