@@ -133,7 +133,7 @@ def retrieve_current_dicts(likelihood_file, transitions_file):
                     pos = content[0]
                     chance = float(content[1])
                     likelihood[word][pos] = chance
-                    
+
     if (os.stat(transitions_file).st_size == 0):
         print("transitions.txt is empty\n")
     else:
@@ -160,7 +160,7 @@ def retrieve_current_dicts(likelihood_file, transitions_file):
                     nextPOS = content[0]
                     chance = float(content[1])
                     transitions[pos][nextPOS] = chance
-            print(transitions[pos][nextPOS])
+            #print(transitions[pos][nextPOS])
 
 
 def main():
