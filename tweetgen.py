@@ -12,7 +12,7 @@ import random
 import string
 import math
 from stop_list import closed_class_stop_words #List of stop words for cosine similarity calculation
-#import numpy as np
+#import numpy as np #garbage
 #import re #if we need regex for whatever reason
 
 
@@ -31,6 +31,8 @@ from stop_list import closed_class_stop_words #List of stop words for cosine sim
 #SELF LEARNING: Save celebrity NN/NNP preferences and prefer those over other common nouns.
 
 """
+#CODE HERE
+
 
 
 

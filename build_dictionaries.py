@@ -4,6 +4,7 @@
     #ONLY DO THIS when compiling everything for the first time, or if dictionaries are messed up.
 
 import sys
+import os
 
 #Hash table of POS and word frequencies based on POS
 likelihood = dict() 
@@ -84,32 +85,98 @@ def add_likelihood(word, pos):
             likelihood[word][token] = (likelihood[word][token] / count)
 
 #Writes dictionaries to file
-def write_dictionaries():
-     with open("dictionaries.txt", "w") as f:
+def rewrite_dictionaries():
+    with open("likelihoods.txt", "w") as f:
         f.write("LIKELIHOODS:\n")
         for word in likelihood:
             f.write("\t%s\n" % word)
             for pos in likelihood.get(word):
-                f.write("\t\t%s,%.4f\n" % (pos, likelihood[word][pos]))
-        f.write("\nTRANSITIONS:\n")
+                f.write("\t\t%s\t%.4f\n" % (pos, likelihood[word][pos]))
+    with open("transitions.txt", "w") as f:
+        f.write("TRANSITIONS:\n")
         for pos in transitions:
             f.write("\t%s\n" % pos)
             for nextPOS in transitions.get(pos):
-                f.write("\t\t%s,%.4f\n" % (nextPOS, transitions[pos][nextPOS]))
+                f.write("\t\t%s\t%.4f\n" % (nextPOS, transitions[pos][nextPOS]))
+
+#Updates dictionaries, and then writes to file
+def update_dictionaries():
+    pass
+
+#Retrieves current dictionary from likelihoods.txt
+def retrieve_current_dicts(likelihood_file, transitions_file):
+    #temp = 0
+
+    if (os.stat(likelihood_file).st_size == 0):
+        print("likelihoods.txt is empty.\n")
+    else:
+        with open(likelihood_file, "r") as f:
+            word = ""
+            pos = ""
+            chance = 0
+
+            for line in f:
+                content = line
+
+                if ((line =='\n') or (content[0] == ("LIKELIHOODS:\n"))):
+                    #If line is newline or start of file
+                    continue
+
+                content = line.lstrip("\t").rstrip('\n').split("\t")
+                if len(content) == 1:
+                    #Line is an identifier (new word, or a possible POS for word)
+                    #Format: word
+                    word = content[0]
+                    likelihood[word] = dict()
+                else:
+                    #Format: pos chance
+                    pos = content[0]
+                    chance = float(content[1])
+                    likelihood[word][pos] = chance
+                    
+    if (os.stat(transitions_file).st_size == 0):
+        print("transitions.txt is empty\n")
+    else:
+        with open(transitions_file, "r") as f:
+            pos = ""
+            nextPOS = ""
+            chance = 0
+
+            for line in f:
+                content = line
+
+                if ((line == '\n') or (content[0] == ("TRANSITIONS:\n"))):
+                    #If line is newline or start of file
+                    continue
+
+                content = line.lstrip('\t').rstrip('\n').split("\t")
+                if len(content) == 1:
+                    #Line is a identifier (new POS)
+                    #Format: pos
+                    pos = content[0]
+                    transitions[pos] = dict()
+                else:
+                    #Format: nextPOS chance
+                    nextPOS = content[0]
+                    chance = float(content[1])
+                    transitions[pos][nextPOS] = chance
+            print(transitions[pos][nextPOS])
+
 
 def main():
     #If "start" is added as an arg after python3 build_dictionaries.py corpus.txt, build dicts from stratch
-    #ONLY DO THIS when compiling everything for the first time, or if dictionaries are messed up.
+        #ONLY DO THIS when compiling everything for the first time, or if dictionaries are messed up.
 
+    retrieve_current_dicts("likelihoods.txt", "transitions.txt")
     build_likelihood(sys.argv[1])
     build_transitions(sys.argv[1])
     if (len(sys.argv) > 2):
         if (sys.argv[2].lower() == "start"):
-            write_dictionaries()
+            rewrite_dictionaries()
         else:
-            print("Garbage input for sys.argv[2]\n")
+            pass
     else:
-        pass
+        update_dictionaries()
 
 if __name__ == "__main__":
     main()
