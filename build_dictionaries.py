@@ -1,11 +1,16 @@
+#File used to build likelihood and probability tables. Takes properly formatted POS textfile and builds tables off that. Writes values to a textfile.
+#Input format is: python3 corpus.pos (or corpus.txt, etc...)
+#Can add "start" after args to build (reset) dictionaries from scratch
+
 import sys
 
 #Hash table of POS and word frequencies based on POS
-likelihood = dict() #{"VB": dict(), "VBP": dict(), "VBZ": dict(), "VBD": dict(), "VBG": dict(), "VBN": dict(), "NNP": dict(), "NNPS": dict(), "NN": dict(), "NNS": dict(), "JJ": dict(), "JJR": dict(), "JJS": dict(), "RB": dict(), "RBR": dict(), "RBS": dict(), "RP": dict(), "PRP": dict(), "PP$": dict(), "WP": dict(), "WP$": dict(), "WDT": dict(), "WRB": dict(), "CC": dict(), "CD": dict(), "DT": dict(), "PDT": dict(), "IN": dict(), "MD": dict(), "#": dict(), "$": dict(), ".": dict(), ",": dict(), ":": dict(), "(": dict(), ")": dict(), '"': dict(), "'": dict(), "''": dict(), "``": dict(), "FW": dict(), "SYM": dict(), "LS": dict(), "TO": dict(), "POS": dict(), "UH": dict(), "EX": dict(), "PRP$": dict(), "SENTENCE_BREAK": dict(), "OOV": dict(), }
-#Hash table of POS and transitions to next POS
-transitions = dict() #{"VB": dict(), "VBP": dict(), "VBZ": dict(), "VBD": dict(), "VBG": dict(), "VBN": dict(), "NNP": dict(), "NNPS": dict(), "NN": dict(), "NNS": dict(), "JJ": dict(), "JJR": dict(), "JJS": dict(), "RB": dict(), "RBR": dict(), "RBS": dict(), "RP": dict(), "PRP": dict(), "PP$": dict(), "WP": dict(), "WP$": dict(), "WDT": dict(), "WRB": dict(), "CC": dict(), "CD": dict(), "DT": dict(), "PDT": dict(), "IN": dict(), "MD": dict(), "#": dict(), "$": dict(), ".": dict(), ",": dict(), ":": dict(), "(": dict(), ")": dict(), '"': dict(), "'": dict(), "''": dict(), "``": dict(), "FW": dict(), "SYM": dict(), "LS": dict(), "TO": dict(), "POS": dict(), "UH": dict(), "EX": dict(), "PRP$": dict(), "SENTENCE_BREAK": dict(), "OOV": dict(), }
+likelihood = dict() 
 
-###Build likelihood dictionary word --> pos --> count
+#Hash table of POS and transitions to next POS
+transitions = dict() 
+
+###Dictionary format: word pos count
 #Function to build likelihood table
 def build_likelihood(filepath):
     with open(filepath, "r") as f:
@@ -76,3 +81,34 @@ def add_likelihood(word, pos):
             count += likelihood.get(word).get(token)
         for token in likelihood.get(word):
             likelihood[word][token] = (likelihood[word][token] / count)
+
+#Writes dictionaries to file
+def write_dictionaries():
+     with open("dictionaries.txt", "w") as f:
+        f.write("LIKELIHOODS:\n")
+        for word in likelihood:
+            f.write("\t%s\n" % word)
+            for pos in likelihood.get(word):
+                f.write("\t\t%s,%.4f\n" % (pos, likelihood[word][pos]))
+        f.write("\nTRANSITIONS:\n")
+        for pos in transitions:
+            f.write("\t%s\n" % pos)
+            for nextPOS in transitions.get(pos):
+                f.write("\t\t%s,%.4f\n" % (nextPOS, transitions[pos][nextPOS]))
+
+def main():
+    #If "start" is added as an arg after python3 build_dictionaries.py corpus.txt, build dicts from stratch
+
+    print("%s %s %s\n" % (sys.argv[0], sys.argv[1], sys.argv[2]))
+    build_likelihood(sys.argv[1])
+    build_transitions(sys.argv[1])
+    if (len(sys.argv) > 2):
+        if (sys.argv[2].lower() == "start"):
+            write_dictionaries()
+        else:
+            print("Garbage input for sys.argv[2]\n")
+    else:
+        pass
+
+if __name__ == "__main__":
+    main()
