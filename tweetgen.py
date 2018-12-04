@@ -3,15 +3,16 @@
     Automated Tweet Generator
 """
 
-#How should we do this boiz
-#For words, we should use feature structures, likelihood, and probability.
+
 
 import sys
 import nltk
 import random
 import string
 import math
+import build_dictionaries #Import built dictionaries. 
 from stop_list import closed_class_stop_words #List of stop words for cosine similarity calculation
+
 #import numpy as np #garbage
 #import re #if we need regex for whatever reason
 
@@ -25,14 +26,18 @@ from stop_list import closed_class_stop_words #List of stop words for cosine sim
 
 
 
-#TWEET GENERATION ALGORITHM
-"""RULES: 
-
+###TWEET GENERATION ALGORITHM####
+#"""RULES: 
+#
 #SELF LEARNING: Save celebrity NN/NNP preferences and prefer those over other common nouns.
+#
+#"""
+##CODE HERE
+#################################
 
-"""
-#CODE HERE
-
+build_dictionaries.retrieve_current_dicts("likelihoods.txt", "transitions.txt") #Builds likelihood and transition dicts from text files
+likelihood_dict = build_dictionaries.likelihood
+transition_dict = build_dictionaries.transitions
 
 
 

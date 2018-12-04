@@ -1,7 +1,9 @@
 #File used to build likelihood and probability tables. Takes properly formatted POS textfile and builds tables off that. Writes values to a textfile.
-#Input format is: python3 corpus.pos (or corpus.txt, etc...)
-#Can add "start" after args to build (reset) dictionaries from scratch. 
-    #ONLY DO THIS when compiling everything for the first time, or if dictionaries are messed up.
+#Directly calling this program Input format is: python3 corpus.pos (or corpus.txt, etc...)
+#   Can add "start" after args to build (reset) dictionaries from scratch. 
+#   ONLY DO THIS when compiling everything for the first time, or if dictionaries are messed up.
+
+#We can expand this to encompass multiple dicts for multiple celebrity bots
 
 import sys
 import os
