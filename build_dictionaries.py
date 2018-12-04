@@ -177,7 +177,7 @@ def retrieve_current_dicts(likelihood_file, transitions_file):
             for line in f:
                 content = line
 
-                if ((line =='\n') or (content[0] == ("LIKELIHOODS:\n"))):
+                if ((line =='\n') or (content[0] == ("LIKELIHOODS:"))):
                     #If line is newline or start of file
                     continue
 
@@ -205,7 +205,7 @@ def retrieve_current_dicts(likelihood_file, transitions_file):
             for line in f:
                 content = line
 
-                if ((line == '\n') or (content[0] == ("TRANSITIONS:\n"))):
+                if ((line == '\n') or (content[0] == ("TRANSITIONS:"))):
                     #If line is newline or start of file
                     continue
 

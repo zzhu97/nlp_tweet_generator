@@ -1,0 +1,2 @@
+#Creates dictionaries for chatbots.
+

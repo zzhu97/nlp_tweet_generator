@@ -27,11 +27,13 @@ from stop_list import closed_class_stop_words #List of stop words for cosine sim
 
 
 ###TWEET GENERATION ALGORITHM####
-#"""RULES: 
+#RULES:
+#   - 150 character max
+#    
 #
 #SELF LEARNING: Save celebrity NN/NNP preferences and prefer those over other common nouns.
 #
-#"""
+#
 ##CODE HERE
 #################################
 
@@ -39,7 +41,28 @@ build_dictionaries.retrieve_current_dicts("likelihoods.txt", "transitions.txt") 
 likelihood_dict = build_dictionaries.likelihood
 transition_dict = build_dictionaries.transitions
 
+def main():
+    for pos in transition_dict:
+        print(pos)
 
+if __name__ == "__main__":
+    main()
+
+class Chatbot:
+    def __init__(self, name, likelihoods, transitions):
+        self.name = name
+        self.bot_likelihood = dict() #Own likelihood table
+        self.bot_transitions = dict() #Own transitions table
+
+    #Generate a response based on topic
+    #Topic should be a word/phrase that has associated features
+    def generate_response(topic):
+        sentence = ""
+        char_limit = 0 #Max is 150
+
+    def initiate_basic_dicts(likelihoods, transitions):
+        self.bot_likelihood = likelihoods
+        self.bot_transitions = transitions
 
 """
 ### TEST CODE BLOCK FROM medium.com ###
