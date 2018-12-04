@@ -42,8 +42,7 @@ likelihood_dict = build_dictionaries.likelihood
 transition_dict = build_dictionaries.transitions
 
 def main():
-    for pos in transition_dict:
-        print(pos)
+    pass
 
 if __name__ == "__main__":
     main()
@@ -51,8 +50,8 @@ if __name__ == "__main__":
 class Chatbot:
     def __init__(self, name, likelihoods, transitions):
         self.name = name
-        self.bot_likelihood = dict() #Own likelihood table
-        self.bot_transitions = dict() #Own transitions table
+        self.generation = build_dictionaries.word_generation_dict(likelihoods, transitions) #Dict of format: pos>word>(word count)
+
 
     #Generate a response based on topic
     #Topic should be a word/phrase that has associated features

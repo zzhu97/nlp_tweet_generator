@@ -221,6 +221,21 @@ def retrieve_current_dicts(likelihood_file, transitions_file):
                     chance = float(content[1])
                     transitions[pos][nextPOS] = chance
 
+#Creates and returns a dictionary that predicts word probability based on POS
+#Format: pos --> word --> count
+def word_generation_dict(likelihood_dict, transition_dict):
+    ret = dict()
+
+    for word in likelihood_dict:
+        for pos in likelihood_dict.get(word):
+            if pos not in ret:
+                ret[pos] = dict()
+                ret[pos][word] = likelihood_dict[word][pos] * 100
+            else:
+                ret[pos][word] = likelihood_dict[word][pos] * 100
+
+    return ret
+
 def main():
     #If "start" is added as an arg after python3 build_dictionaries.py corpus.txt, build dicts from stratch
         #ONLY DO THIS when compiling everything for the first time, or if dictionaries are messed up.
