@@ -41,27 +41,47 @@ build_dictionaries.retrieve_current_dicts("likelihoods.txt", "transitions.txt") 
 likelihood_dict = build_dictionaries.likelihood
 transition_dict = build_dictionaries.transitions
 
-def main():
-    pass
-
-if __name__ == "__main__":
-    main()
 
 class Chatbot:
     def __init__(self, name, likelihoods, transitions):
         self.name = name
-        self.generation = build_dictionaries.word_generation_dict(likelihoods, transitions) #Dict of format: pos>word>(word count)
-
+        self.generation_dict = build_dictionaries.word_generation_dict(likelihoods, transitions) #Dict of format: pos>word>(word count)
 
     #Generate a response based on topic
     #Topic should be a word/phrase that has associated features
-    def generate_response(topic):
+    def generate_response(self, topic):
+        #Currently, the algorithm is RANDOM. We just want output.
         sentence = ""
         char_limit = 0 #Max is 150
 
-    def initiate_basic_dicts(likelihoods, transitions):
-        self.bot_likelihood = likelihoods
-        self.bot_transitions = transitions
+        prevPOS = "SENTENCE_BREAK"
+        while char_limit < 5:
+            currentPOS = ""
+            word = ""
+            #currentPOS_max = 0
+            possiblePOS = []
+            possibleWord = []
+
+            for pos in transition_dict[prevPOS]:
+                possiblePOS.append(pos)
+            currentPOS = random.choice(possiblePOS)
+
+            for token in self.generation_dict[currentPOS]:
+                possibleWord.append(token)
+            word = random.choice(possibleWord)
+
+            sentence += word + " "
+            prevPOS = currentPOS
+            char_limit += 1
+        print(sentence)
+
+def main():
+    chatbot1 = Chatbot("test_bot1", likelihood_dict, transition_dict)
+    chatbot1.generate_response("test")
+    
+
+if __name__ == "__main__":
+    main()
 
 """
 ### TEST CODE BLOCK FROM medium.com ###

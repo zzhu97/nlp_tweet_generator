@@ -228,11 +228,18 @@ def word_generation_dict(likelihood_dict, transition_dict):
 
     for word in likelihood_dict:
         for pos in likelihood_dict.get(word):
+            count = likelihood_dict[word][pos]
+
+            if (count * 100) < 1: #Necessary for random logic 
+                count = 1
+            else:
+                count *= 100
+
             if pos not in ret:
                 ret[pos] = dict()
-                ret[pos][word] = likelihood_dict[word][pos] * 100
+                ret[pos][word] = int(count)
             else:
-                ret[pos][word] = likelihood_dict[word][pos] * 100
+                ret[pos][word] = int(count)
 
     return ret
 
