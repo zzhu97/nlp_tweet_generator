@@ -9,6 +9,7 @@ import string
 import math
 import build_dictionaries # Import built dictionaries. 
 from stop_list import closed_class_stop_words # List of stop words for cosine similarity calculation
+import chatbot_class
 
 #import numpy as np #garbage
 #import re #if we need regex for whatever reason
@@ -25,48 +26,11 @@ from stop_list import closed_class_stop_words # List of stop words for cosine si
 ##CODE HERE
 #################################
 
-build_dictionaries.retrieve_current_dicts("likelihoods.txt", "transitions.txt") # Builds likelihood and transition dicts from text files
-likelihood_dict = build_dictionaries.likelihood
-transition_dict = build_dictionaries.transitions
-
-
-class Chatbot:
-    def __init__(self, name, likelihoods, transitions):
-        self.name = name
-        self.generation_dict = build_dictionaries.word_generation_dict(likelihoods, transitions) #Dict of format: pos>word>(word count)
-
-    #Generate a response based on topic
-    #Topic should be a word/phrase that has associated features
-    def generate_response(self, topic):
-        #Currently, the algorithm is RANDOM. We just want output.
-        sentence = ""
-        char_limit = 0 #Max is 150
-
-        prevPOS = "SENTENCE_BREAK"
-        while char_limit < 5:
-            currentPOS = ""
-            word = ""
-            #currentPOS_max = 0
-            possiblePOS = []
-            possibleWord = []
-
-            for pos in transition_dict[prevPOS]:
-                possiblePOS.append(pos)
-            currentPOS = random.choice(possiblePOS)
-
-            for token in self.generation_dict[currentPOS]:
-                possibleWord.append(token)
-            word = random.choice(possibleWord)
-
-            sentence += word + " "
-            prevPOS = currentPOS
-            char_limit += 1
-        print(sentence)
 
 
 def main():
-    pass
+    chatbot1 = chatbot_class.Chatbot("test_bot1", chatbot_class.likelihood_dict, chatbot_class.transition_dict, chatbot_class.wordcount_dict) #TEST
+    chatbot1.generate_response("test") #TEST
 
 if __name__ == "__main__":
     main()
-

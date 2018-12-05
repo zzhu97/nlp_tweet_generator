@@ -1,4 +1,6 @@
-
+import os
+import random
+import build_dictionaries
 
 build_dictionaries.retrieve_current_dicts("likelihoods.txt", "transitions.txt", "wordcount.txt") #Builds likelihood and transition dicts from text files
 likelihood_dict = build_dictionaries.likelihood
