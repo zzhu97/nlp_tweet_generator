@@ -7,9 +7,13 @@
 
 import sys
 import os
+import math
 
 #Hash table of POS and word frequencies based on POS
-likelihood = dict() 
+likelihood = dict()
+
+#Hash table of words and the # of times used
+wordcount = dict() 
 
 #Hash table of POS and transitions to next POS
 transitions = dict() 
@@ -28,8 +32,10 @@ def build_likelihood(filepath):
                 likelihood[word] = dict()
             if pos in likelihood[word]:
                 likelihood[word][pos] += 1
+                wordcount[word] += 1
             else:
                 likelihood[word][pos] = 1
+                wordcount[word] = 1
     #Calculate likelihood percentages
     for word in likelihood:
         count = 0
@@ -75,7 +81,7 @@ def build_transitions(filepath):
             transitions[pos][token] = (transitions[pos][token] / count)
     f.close()
 
-#Add an OOV word to likelihood table
+"""#Add an OOV word to likelihood table
 def add_likelihood(word, pos):
     likelihood[word] = dict()
     likelihood[word][pos] = 1
@@ -85,6 +91,7 @@ def add_likelihood(word, pos):
             count += likelihood.get(word).get(token)
         for token in likelihood.get(word):
             likelihood[word][token] = (likelihood[word][token] / count)
+"""
 
 #Writes dictionaries to file
 def rewrite_dictionaries():
@@ -100,6 +107,9 @@ def rewrite_dictionaries():
             f.write("\t%s\n" % pos)
             for nextPOS in transitions.get(pos):
                 f.write("\t\t%s\t%.4f\n" % (nextPOS, transitions[pos][nextPOS]))
+    with open("wordcount.txt", "w") as f:
+        for word in wordcount:
+            f.write("%s\t%d\n" % (word, wordcount[word]))
 
 #Updates dictionaries (using a corpus), and then writes to file
 #ONLY counts new POSes and new words - does not update current ones since WSJ is pretty comprehensive
@@ -162,8 +172,8 @@ def update_dictionaries(new_corpus):
             for token in transitions.get(pos):
                 transitions[pos][token] = (transitions[pos][token] / count)
 
-#Retrieves current dictionary from likelihoods.txt and transitions.txt
-def retrieve_current_dicts(likelihood_file, transitions_file):
+#Retrieves current dictionary from likelihoods.txt and transitions.txt and wordcount.txt
+def retrieve_current_dicts(likelihood_file, transitions_file, wordcount_file):
 
     #Retrieves and rebuilds likelihood dictionary
     if (os.stat(likelihood_file).st_size == 0):
@@ -221,25 +231,40 @@ def retrieve_current_dicts(likelihood_file, transitions_file):
                     chance = float(content[1])
                     transitions[pos][nextPOS] = chance
 
+    #Retrieves wordcount
+    if (os.stat(wordcount_file).st_size == 0):
+        print("wordcount.txt is empty\n")
+    else:
+        with open(wordcount_file, "r") as f:
+            for line in f:
+                content = line.rstrip('\n').split('\t')
+                word = content[0]
+                count = content[1]
+
+                wordcount[word] = count
+
 #Creates and returns a dictionary that predicts word probability based on POS
 #Format: pos --> word --> count
-def word_generation_dict(likelihood_dict, transition_dict):
+def word_generation_dict(likelihood_dict, transition_dict, wordcount_dict):
     ret = dict()
 
     for word in likelihood_dict:
+        num_of_words = int(wordcount[word])
         for pos in likelihood_dict.get(word):
-            count = likelihood_dict[word][pos]
+            pos_chance = likelihood_dict[word][pos]
 
-            if (count * 100) < 1: #Necessary for random logic 
-                count = 1
-            else:
-                count *= 100
+            try:
+                count = math.ceil(num_of_words / pos_chance) #Number of times word is used with POS
+                #if count > 1:
+                #    print(word, ": ", pos, ": ", count) #TEMP
+            except: #chance is 0
+                continue
 
             if pos not in ret:
                 ret[pos] = dict()
-                ret[pos][word] = int(count)
+                ret[pos][word] = count
             else:
-                ret[pos][word] = int(count)
+                ret[pos][word] = count
 
     return ret
 
