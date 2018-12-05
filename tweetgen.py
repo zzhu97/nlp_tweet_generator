@@ -25,7 +25,6 @@ from stop_list import closed_class_stop_words # List of stop words for cosine si
 ##CODE HERE
 #################################
 
-<<<<<<< HEAD
 build_dictionaries.retrieve_current_dicts("likelihoods.txt", "transitions.txt") # Builds likelihood and transition dicts from text files
 likelihood_dict = build_dictionaries.likelihood
 transition_dict = build_dictionaries.transitions
@@ -63,9 +62,7 @@ class Chatbot:
             prevPOS = currentPOS
             char_limit += 1
         print(sentence)
-=======
 
->>>>>>> e7e8d5817a8d1da1c350bd79187135eb24cae77b
 
 def main():
     pass
