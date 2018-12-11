@@ -1,27 +1,17 @@
-#File used to build likelihood and probability tables. Takes properly formatted POS textfile and builds tables off that. Writes values to a textfile.
-#Directly calling this program Input format is: python3 corpus.pos (or corpus.txt, etc...)
-#   Can add "start" after args to build (reset) dictionaries from scratch. 
-#   ONLY DO THIS when compiling everything for the first time, or if dictionaries are messed up.
-
-#We can expand this to encompass multiple dicts for multiple celebrity bots
-
 import sys
 import os
 import math
+import pickle
+import import_dictionaries
 
-#Hash table of POS and word frequencies based on POS
-likelihood = dict()
+#Import dictionaries from import_dictionaries.py using Pickle
+likelihood = import_dictionaries.likelihood_dict
+transitions = import_dictionaries.transitions_dict
+wordcount = import_dictionaries.wordcount_dict
 
-#Hash table of words and the # of times used
-wordcount = dict() 
-
-#Hash table of POS and transitions to next POS
-transitions = dict() 
-
-###Dictionary format: word pos count
-#Function to build likelihood table
-def build_likelihood(filepath):
-    with open(filepath, "r") as f:
+###BUILDS LIKELIHOOD DICTIONARY
+def build_likelihood(fileIn):
+    with open(fileIn, "r") as f:
         for line in f:
             if line == '\n': #skip sentence breaks
                 continue
@@ -43,11 +33,10 @@ def build_likelihood(filepath):
             count += likelihood.get(word).get(token)
         for token in likelihood.get(word):
             likelihood[word][token] = (likelihood[word][token] / count)
-    #f.close()
 
-###Build prior probabilities table###
-def build_transitions(filepath):
-    with open(filepath, "r") as f:
+###Build probabilities dictionary
+def build_transitions(fileIn):
+    with open(fileIn, "r") as f:
         #temp will be the previous token
         temp = f.readline().rstrip('\n').split('\t')[1] #First token in file
         transitions["SENTENCE_BREAK"] = dict()
@@ -77,50 +66,25 @@ def build_transitions(filepath):
         for token in transitions.get(pos):
             count += transitions.get(pos).get(token)
         for token in transitions.get(pos):
-            #print(token)
             transitions[pos][token] = (transitions[pos][token] / count)
-    f.close()
 
-"""#Add an OOV word to likelihood table
-def add_likelihood(word, pos):
-    likelihood[word] = dict()
-    likelihood[word][pos] = 1
-    for word in likelihood:
-        count = 0
-        for token in likelihood.get(word):
-            count += likelihood.get(word).get(token)
-        for token in likelihood.get(word):
-            likelihood[word][token] = (likelihood[word][token] / count)
-"""
+###Saves dictionaries to file using pickle (.pkl extension)
+def write_dictionaries(pkl_file):
+    #Order is: likelihoods, transitions, (wordcount)?
+    with open(pkl_file, "wb") as fOut:
+        pickle.dump(likelihood, fOut, -1)
+        pickle.dump(transitions, fOut, -1)
+        pickle.dump(wordcount, fOut, -1)
 
-#Writes dictionaries to file
-def rewrite_dictionaries():
-    with open("likelihoods.txt", "w") as f:
-        f.write("LIKELIHOODS:\n")
-        for word in likelihood:
-            f.write("\t%s\n" % word)
-            for pos in likelihood.get(word):
-                f.write("\t\t%s\t%.4f\n" % (pos, likelihood[word][pos]))
-    with open("transitions.txt", "w") as f:
-        f.write("TRANSITIONS:\n")
-        for pos in transitions:
-            f.write("\t%s\n" % pos)
-            for nextPOS in transitions.get(pos):
-                f.write("\t\t%s\t%.4f\n" % (nextPOS, transitions[pos][nextPOS]))
-    with open("wordcount.txt", "w") as f:
-        for word in wordcount:
-            f.write("%s\t%d\n" % (word, wordcount[word]))
-
-#Updates dictionaries (using a corpus), and then writes to file
-#ONLY counts new POSes and new words - does not update current ones since WSJ is pretty comprehensive
-#   This is temporary until we find a need to modify this algorithm
+###Updates dictionaries with a corpus, then saves it to .pkl file
+###Only counts new POSes and new words
 def update_dictionaries(new_corpus):
     #Corpus should be formatted as word\tPOS
     original_dict = likelihood
     original_transitions = transitions
 
     with open(new_corpus, "r") as f:
-        #Add likelihoods first
+        #Add likelihoods and wordcounts first
         for line in f:
             if line == '\n':
                 continue
@@ -130,6 +94,9 @@ def update_dictionaries(new_corpus):
             if word not in original_dict:
                 if word not in likelihood:
                     likelihood[word] = dict()
+                    wordcount[word] = 1 #Updates wordcount
+                else:
+                    wordcount[word] += 1 #Updates wordcount
                 if pos in likelihood[word]:
                     likelihood[word][pos] += 1
                 else:
@@ -158,6 +125,8 @@ def update_dictionaries(new_corpus):
                 prev = "SENTENCE_BREAK"
             else:
                 if pos not in original_transitions:
+                    print("Prev: ", prev)
+                    print("Pos: ", pos)
                     if pos not in transitions:
                         transitions[pos] = dict()
                         transitions[prev][pos] = 1
@@ -172,102 +141,7 @@ def update_dictionaries(new_corpus):
             for token in transitions.get(pos):
                 transitions[pos][token] = (transitions[pos][token] / count)
 
-#Retrieves current dictionary from likelihoods.txt and transitions.txt and wordcount.txt
-def retrieve_current_dicts(likelihood_file, transitions_file, wordcount_file):
-
-    #Retrieves and rebuilds likelihood dictionary
-    if (os.stat(likelihood_file).st_size == 0):
-        print("likelihoods.txt is empty.\n")
-    else:
-        with open(likelihood_file, "r") as f:
-            word = ""
-            pos = ""
-            chance = 0
-
-            for line in f:
-                content = line
-
-                if ((line =='\n') or (content[0] == ("LIKELIHOODS:"))):
-                    #If line is newline or start of file
-                    continue
-
-                content = line.lstrip("\t").rstrip('\n').split("\t")
-                if len(content) == 1:
-                    #Line is an identifier (new word, or a possible POS for word)
-                    #Format: word
-                    word = content[0]
-                    likelihood[word] = dict()
-                else:
-                    #Format: pos chance
-                    pos = content[0]
-                    chance = float(content[1])
-                    likelihood[word][pos] = chance
-
-    #Retrieves and rebuilds transition dictionary
-    if (os.stat(transitions_file).st_size == 0):
-        print("transitions.txt is empty\n")
-    else:
-        with open(transitions_file, "r") as f:
-            pos = ""
-            nextPOS = ""
-            chance = 0
-
-            for line in f:
-                content = line
-
-                if ((line == '\n') or (content[0] == ("TRANSITIONS:"))):
-                    #If line is newline or start of file
-                    continue
-
-                content = line.lstrip('\t').rstrip('\n').split("\t")
-                if len(content) == 1:
-                    #Line is a identifier (new POS)
-                    #Format: pos
-                    pos = content[0]
-                    transitions[pos] = dict()
-                else:
-                    #Format: nextPOS chance
-                    nextPOS = content[0]
-                    chance = float(content[1])
-                    transitions[pos][nextPOS] = chance
-
-    #Retrieves wordcount
-    if (os.stat(wordcount_file).st_size == 0):
-        print("wordcount.txt is empty\n")
-    else:
-        with open(wordcount_file, "r") as f:
-            for line in f:
-                content = line.rstrip('\n').split('\t')
-                word = content[0]
-                count = content[1]
-
-                wordcount[word] = count
-
-#Creates and returns a dictionary that predicts word probability based on POS
-#Format: pos --> word --> count
-def word_generation_dict(likelihood_dict, transition_dict, wordcount_dict):
-    ret = dict()
-
-    for word in likelihood_dict:
-        num_of_words = int(wordcount[word])
-        for pos in likelihood_dict.get(word):
-            pos_chance = likelihood_dict[word][pos]
-
-            try:
-                count = math.ceil(num_of_words / pos_chance) #Number of times word is used with POS
-                #if count > 1:
-                #    print(word, ": ", pos, ": ", count) #TEMP
-            except: #chance is 0
-                continue
-
-            if pos not in ret:
-                ret[pos] = dict()
-                ret[pos][word] = count
-            else:
-                ret[pos][word] = count
-
-    return ret
-
+###MAIN FUNCTION
 def main():
     #If "start" is added as an arg after python3 build_dictionaries.py corpus.txt, build dicts from stratch
         #ONLY DO THIS when compiling everything for the first time, or if dictionaries are messed up.
@@ -275,22 +149,20 @@ def main():
     if (len(sys.argv) > 2):
         if (sys.argv[2].lower() == "start"):
             #Rewrite dictionaries from scratch using corpus
+            print("Writing dictionaries - Starting from scratch.")
+            with open("dictionaries.pkl", "wb") as f: #Erases dicts from pkl file
+                pass
             build_likelihood(sys.argv[1])
             build_transitions(sys.argv[1])
-            rewrite_dictionaries()
-        elif (sys.argv[2].lower() == "test"):
-            #test
-            retrieve_current_dicts("likelihoods.txt", "transitions.txt")
-            build_likelihood(sys.argv[1])
-            build_transitions(sys.argv[1])
+            write_dictionaries("dictionaries.pkl")
         else:
             pass
     else:
         #Update current dictionaries using corpus (will not delete old dictionaries)
-        #   This only adds new words and new POSes
-        retrieve_current_dicts("likelihoods.txt", "transitions.txt")
+        #This only adds new words and new POSes
+
         update_dictionaries(sys.argv[1])
-        rewrite_dictionaries()
+        write_dictionaries("dictionaries.pkl")
 
 if __name__ == "__main__":
     main()
