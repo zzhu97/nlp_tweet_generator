@@ -1,26 +1,24 @@
-#Notes: Prioritize hashtags! If bot previously has used hashtag, good. If not, say something different?
-#Notes: Save previous tweets in a file for NLTK shit
+#This file contains the Chatbot object class
 
 import nltk
 import random
 import import_dictionaries
 
 #Imports general dictionaries from import_dictionaries.py 
-likelihood = import_dictionaries.likelihood_dict
-transitions = import_dictionaries.transitions_dict
-wordcount = import_dictionaries.wordcount_dict
+main_likelihood = import_dictionaries.main_likelihood_dict
+main_transitions = import_dictionaries.main_transitions_dict
+big_dictionary = import_dictionaries.big_dictionary_dict
 collection_words = nltk.corpus.wordnet #Collection of words used for synonym matching
 
 class Chatbot:
-    lemmatizer = nltk.stem.WordNetLemmatizer() #Lemmatizer that changes words to stem of word. Accepts string
+    #lemmatizer = nltk.stem.WordNetLemmatizer() #Lemmatizer that changes words to stem of word. Accepts string
 
     ###INITIATE CHATBOT
     def __init__(self, name):
         self.name = name
-        #self.bot_dictionary = dict()
         self.tweets_history = list() #Will be a dictionary of dictionaries of past tweets (organized by topic)
 
-        self.bot_dictionary = likelihood #TEMP
+        #TODO: bot dictionary here
     ###END INITIATE CHATBOT
 
 
@@ -41,23 +39,23 @@ class Chatbot:
             possibleWord = []
 
             #Random word generator
-            for nextPOS in transitions[prevPOS]:
-                if transitions[prevPOS][nextPOS] < 0.1:
+            for nextPOS in main_transitions[prevPOS]:
+                if main_transitions[prevPOS][nextPOS] < 0.1:
                     continue
                 elif nextPOS == "SENTENCE_BREAK": #Skip newlines for now
                     continue
                 possiblePOS.append(nextPOS)
             if not possiblePOS: #If all POSes have <10% chance
-                for nextPOS in transitions[prevPOS]:
+                for nextPOS in main_transitions[prevPOS]:
                     if nextPOS == "SENTENCE_BREAK": #Skip newlines for now
                         continue
                     possiblePOS.append(nextPOS)
 
             currentPOS = random.choice(possiblePOS)
 
-            for token in self.bot_dictionary:
+            for token in main_likelihood:
                 #possibleWord.append(token)
-                if currentPOS in self.bot_dictionary[token]:
+                if currentPOS in main_likelihood[token]:
                     possibleWord.append(token)
             word = random.choice(possibleWord)
 
