@@ -1,0 +1,46 @@
+#
+$
+''
+(
+)
+,
+.
+:
+CC - coordinating conjunction - ("or, and ,neither, versus")
+CD - cardinal number - NUMBER ("100, twenty-one, thirty")
+DT - determiner - DETERMINER ("All, those, every")
+EX - existential there - "There"
+FW - foreign word - FOREIGN WORD?
+IN - preposition/subordinating conjunction - PREPOSITION ("Before, above, for")
+JJ - adjective - ADJECTIVE ("CLEAN, FUZZY, GOOD")
+JJR - adjective comparitive - ADJECTIVE ("FUZZIER, BETTER")
+JJS - adjective superlative - ADJECTIVE ("MOST, SPOOKIEST")
+LS - list item marker - LIST ("FIRST, SECOND, 1, 2")
+MD - modal - MODAL (Helps verbs --> "CAN perform, MUST perform, MIGHT perform")
+NN - noun, singular or mass - NOUN ("Dog, Cat")
+NNP - proper noun - NOUN ("Cuba, American, America")
+NNPS - plural proper noun - NOUN ("Cheerios, Cubans, Americans")
+NNS - plural noun - NOUN ("triangles, carrots")
+PDT - predeterminer - DETERMINER ("many, quite, both")
+POS - possessive ending - POS ("'s")
+PRP - personal pronoun - (PRO)NOUN ("They, it, he")
+PRP$ - possessive pronoun - (PRO)NOUN_POSSESSIVE ("His, My, Their")
+RB - adverb - ADVERB ("proudly, limply, rigorously")
+RBR - comparative adverb - ADVERB ("better, farther, smarter")
+RBS - superlative adverb - ADVERB ("most, hardest, least")
+RP - particle - PARTICLE ("through, over, along, before, aside")
+SENTENCE_BREAK - end/start of sentence
+SYM - symbol - SYMBOL ("x, y, =, &") (& SHOULD BE CONSIDERED AS "AND")
+TO - to - TO ("to") (maybe PREPOSITION?)
+UH - interjection - INTERJECTION ("please, aw, alas, OK")
+VB - verb, base form - VERB ("talk, sharpen")
+VBD - verb, past tense - VERB ("talked, sharpened")
+VBG - verb, gerund or present participle - VERB ("talking, sharpening")
+VBN - verb, past participle - VERB ("talked, sharpened")
+VBP - verb, non-3rd person singular present - VERB ("talk, sharpen")
+VBZ - verb, 3rd person singular present - VERB ("talks, sharpens")
+WDT - Wh-determiner - DETERMINER
+WP - Wh-pronoun - (PRO)NOUN
+WP$ - possessive wh-pronoun - "whose"
+WRB - Wh-adverb - "where, when, how, why, whenever..."
+``

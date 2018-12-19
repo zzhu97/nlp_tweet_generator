@@ -1,5 +1,5 @@
 #This is run every time build_dictionaries is run.
-#Retrieves likelihood, transitions, and wordcount from dictionaries.pkl using Pickle library
+#Retrieves likelihood, transitions, and big dictionary using Pickle library
 
 import pickle
 
@@ -14,7 +14,7 @@ with open("dictionaries.pkl", "rb") as f:
         main_transitions_dict = dict()
         #big_dictionary_dict = dict()
 
-with open("big_dictionary.pkl", "rb") as f:
+with open("bigdict.pkl", "rb") as f:
     try:
         big_dictionary_dict = pickle.load(f)
     except:

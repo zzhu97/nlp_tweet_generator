@@ -2,27 +2,32 @@
 
 import nltk
 import random
-import import_dictionaries
+import global_vars
 
 #Imports general dictionaries from import_dictionaries.py 
-main_likelihood = import_dictionaries.main_likelihood_dict
-main_transitions = import_dictionaries.main_transitions_dict
-big_dictionary = import_dictionaries.big_dictionary_dict
-collection_words = nltk.corpus.wordnet #Collection of words used for synonym matching
+main_likelihood = global_vars.main_likelihood
+main_transitions = global_vars.main_transitions
+big_dictionary = global_vars.big_dictionary
+syntax_rules = global_vars.syntax_rules2
+nonterminals = global_vars.nonterminals
+terminals = global_vars.terminals
+collection_words = global_vars.collection_words #Collection of words used for synonym matching
 
 class Chatbot:
     #lemmatizer = nltk.stem.WordNetLemmatizer() #Lemmatizer that changes words to stem of word. Accepts string
 
-    ###INITIATE CHATBOT
+    ###
+    #Initiate the chatbot object
     def __init__(self, name):
         self.name = name
         self.tweets_history = list() #Will be a dictionary of dictionaries of past tweets (organized by topic)
 
         #TODO: bot dictionary here
-    ###END INITIATE CHATBOT
+    ###
 
 
-    ###Generate a response based on topic
+    ###
+    #Generate a response based on topic
     #Tweet is a sentence
     def generate_response(self, tweet):
         #Currently, the algorithm is RANDOM. We just want output.
@@ -63,6 +68,7 @@ class Chatbot:
             prevPOS = currentPOS
             char_limit += 1
         print(sentence)
+    ###
 
     def expand_stack(self):
         pass
