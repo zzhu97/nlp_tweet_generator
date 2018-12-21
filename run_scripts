@@ -1,0 +1,3 @@
+cd ./twitie-tagger
+java -jar twitie_tag.jar gate-EN-twitter.model ../$1 ../$2
+cd ..
