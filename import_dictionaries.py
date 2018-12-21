@@ -21,4 +21,11 @@ with open("bigdict.pkl", "rb") as f:
         print("Could not import big dictionary file. Empty dict created")
         big_dictionary_dict = dict()
 
+with open("bot_likelihoods.pkl", "rb") as f:
+    try:
+        list_of_likelihood_tables = pickle.load(f)
+    except:
+        print("bot_likelihoods.pkl is empty. Empty list created.")
+        list_of_likelihood_tables = list()
+
 ###Test code block below

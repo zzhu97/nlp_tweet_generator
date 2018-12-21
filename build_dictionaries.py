@@ -36,6 +36,10 @@ def build_likelihood(fileIn):
 ###
 
 ###
+#Build likelihood from Twitter corpus. Format: word_POS
+###
+
+###
 #Build general probabilities dictionary
 def build_transitions(fileIn):
     with open(fileIn, "r") as f:
@@ -97,41 +101,48 @@ def write_big_dictionary(pkl_file, bigdict):
 
 ###Updates big dictionary with new word
 def update_big_dictionary(smaller_dict):
-    #Smaller_dict should be a dictionary of same format: pos --> list of words
+    #Gets POSes and words of POS from smaller dict (ignores wordcount for now) and adds it to big dict
+
     for pos in smaller_dict:
+        words = []
+        for word in smaller_dict[pos]:
+            words.append(word)
         if pos not in big_dictionary:
+            print(pos) #TEST
             big_dictionary[pos] = list()
-            big_dictionary[pos].append(smaller_dict[pos])
+            big_dictionary[pos].append(words)
         else:
-            list_of_words = smaller_dict[pos]
             original_list_of_words = big_dictionary[pos]
-            for word in list_of_words:
+            for word in words:
                 if word not in original_list_of_words:
                     big_dictionary[pos].append(word)
+    #Clear bigdict.pkl and load updated big_dictionary into file
     with open("bigdict.pkl", "wb") as f:
         pass
     write_big_dictionary("bigdict.pkl", big_dictionary)
 ###
 
-
 ###
 #Main function here. Builds likelihood, transitions, and big_dictionary from scratch from a corpus
 def main():
-    if (sys.argv[2] == "scratch"):
-        print("Writing dictionaries - Starting from scratch.")
-        with open("dictionaries.pkl", "wb") as f: #Erases dicts from pkl file
+    try:
+        if (sys.argv[2] == "scratch"):
+            print("Writing dictionaries - Starting from scratch.")
+            with open("dictionaries.pkl", "wb") as f: #Erases dicts from pkl file
+                pass
+            with open("bigdict.pkl", "wb") as f:
+                pass
+            build_likelihood(sys.argv[1])
+            build_transitions(sys.argv[1])
+            build_big_dictionary("bigdict.pkl")
+            write_dictionaries("dictionaries.pkl", main_likelihood, main_transitions)
+            write_big_dictionary("bigdict.pkl", big_dictionary)
+        elif (sys.argv[2] == "update"):
             pass
-        with open("bigdict.pkl", "wb") as f:
-            pass
-        build_likelihood(sys.argv[1])
-        build_transitions(sys.argv[1])
-        build_big_dictionary("bigdict.pkl")
-        write_dictionaries("dictionaries.pkl", main_likelihood, main_transitions)
-        write_big_dictionary("bigdict.pkl", big_dictionary)
-    elif (sys.argv[2] == "update"):
-        pass
-    else:
-        print("Incorrect format for build_dictionaries.py.\nFormat is python3 build_dictionaries.py corpus scratch/update")
+        else:
+            print("Incorrect format for build_dictionaries.py\nFormat is: python3 build_dictionaries.py corpus scratch/update")
+    except:
+        print("Incorrect format for build_dictionaries.py\nFormat is: python3 build_dictionaries.py corpus scratch/update")
 ###
 
 if __name__ == "__main__":

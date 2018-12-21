@@ -30,7 +30,7 @@ syntax_rules = [ ["S", ["NP", "VP"]], \
                 ["AdjP", ["ADJECTIVE"], ["CD"], ["CD", "ADJECTIVE"]], \
                 #Predicate
                 ["VP", ["VERB"], ["VERB", "NP"], ["ADVERB", "VERB"], ["MODAL", "VerbP"], ["VERB", "ADVERB"], ["VERB", "PrepP"]], \
-                ["PrepP", ["IN", "NP"]], \
+                ["PrepP", ["IN", "NOUN"]], \
                 ["VerbP", ["VERB"], ["VERB", "NP"], ["ADVERB", "VERB"], ["VERB", "ADVERB"], ["VERB", "PrepP"]], \
                 ]
 ###
