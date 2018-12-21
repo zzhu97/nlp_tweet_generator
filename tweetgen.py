@@ -3,15 +3,8 @@
 # Automated Tweet Generator
 
 import sys
-import nltk
-import random
-import string
-import math
-from stop_list import closed_class_stop_words # List of stop words for cosine similarity calculation
 import global_vars
 import Chatbot_class
-#import re #if we need regex for whatever reason
-
 
 #Format for cmd line is python3 tweetgen.py #chatbots, where #chatbots is number of tweetbots we want
 def main():

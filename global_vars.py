@@ -33,17 +33,6 @@ syntax_rules = [ ["S", ["NP", "VP"]], \
                 ["PrepP", ["IN", "NP"]], \
                 ["VerbP", ["VERB"], ["VERB", "NP"], ["ADVERB", "VERB"], ["VERB", "ADVERB"], ["VERB", "PrepP"]], \
                 ]
-#Test syntax_rules here below:
-"""syntax_rules = [ ["S", ["NP", "VP"]], \
-                ["NP", ["NOUN"]], \
-                ["DetP", ["DETERMINER"]], \
-                ["PossP", ["PRP$"], ["NOUN", "POS"], ["DETERMINER", "NOUN", "POS"]], \
-                ["AdjP", ["ADJECTIVE"], ["CD"], ["CD", "ADJECTIVE"]], \
-                #Predicate
-                ["VP", ["VERB"]], \
-                ["PrepP", ["IN", "NP"]], \
-                ["VerbP", ["VERB"], ["VERB", "NP"], ["ADVERB", "VERB"], ["VERB", "ADVERB"], ["VERB", "PrepP"]], \
-                ]"""
 ###
 
 ###
@@ -76,5 +65,8 @@ def fill_lexicon_table():
     general_lexicon["IN"] = big_dictionary["IN"]
 ###
 
+###
+#Driver code here
 fill_expansion_table()
 fill_lexicon_table()
+###

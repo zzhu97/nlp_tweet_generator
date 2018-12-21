@@ -1,5 +1,4 @@
 import sys
-import os
 import math
 import pickle
 import global_vars
@@ -9,7 +8,8 @@ main_likelihood = global_vars.main_likelihood
 main_transitions = global_vars.main_transitions
 big_dictionary = global_vars.big_dictionary
 
-###BUILDS LIKELIHOOD DICTIONARY
+###
+#Build general likelihood dictionary
 def build_likelihood(fileIn):
     with open(fileIn, "r") as f:
         for line in f:
@@ -33,8 +33,10 @@ def build_likelihood(fileIn):
             count += main_likelihood.get(word).get(token)
         for token in main_likelihood.get(word):
             main_likelihood[word][token] = (main_likelihood[word][token] / count)
+###
 
-###Build probabilities dictionary
+###
+#Build general probabilities dictionary
 def build_transitions(fileIn):
     with open(fileIn, "r") as f:
         #temp will be the previous token
@@ -67,8 +69,10 @@ def build_transitions(fileIn):
             count += main_transitions.get(pos).get(token)
         for token in main_transitions.get(pos):
             main_transitions[pos][token] = (main_transitions[pos][token] / count)
+###
 
-###Builds big dictionary of words sorted by POS
+###
+#Builds general big dictionary of words sorted by POS
 def build_big_dictionary(pkl_file):
     for word in main_likelihood:
         for pos in main_likelihood[word]:
@@ -76,17 +80,20 @@ def build_big_dictionary(pkl_file):
                 big_dictionary[pos] = list()
             big_dictionary[pos].append(word)
 
-###Saves dictionaries to file using pickle (.pkl extension)
+###
+#Saves dictionaries to file using pickle (.pkl extension)
 def write_dictionaries(pkl_file, likelihood, transitions):
     #Switch up order if needed. Top to bottom priority
     with open(pkl_file, "wb") as fOut:
         pickle.dump(likelihood, fOut, -1)
         pickle.dump(transitions, fOut, -1) 
+###
 
 ###Saves big dictionary to file using pickle
 def write_big_dictionary(pkl_file, bigdict):
     with open(pkl_file, "wb") as fOut:
         pickle.dump(big_dictionary, fOut, -1)
+###
 
 ###Updates big dictionary with new word
 def update_big_dictionary(smaller_dict):
@@ -104,21 +111,28 @@ def update_big_dictionary(smaller_dict):
     with open("bigdict.pkl", "wb") as f:
         pass
     write_big_dictionary("bigdict.pkl", big_dictionary)
+###
 
 
-###Main function here.
-#Builds likelihood, transitions, and big_dictionary from scratch from corpus
+###
+#Main function here. Builds likelihood, transitions, and big_dictionary from scratch from a corpus
 def main():
-    print("Writing dictionaries - Starting from scratch.")
-    with open("dictionaries.pkl", "wb") as f: #Erases dicts from pkl file
+    if (sys.argv[2] == "scratch"):
+        print("Writing dictionaries - Starting from scratch.")
+        with open("dictionaries.pkl", "wb") as f: #Erases dicts from pkl file
+            pass
+        with open("bigdict.pkl", "wb") as f:
+            pass
+        build_likelihood(sys.argv[1])
+        build_transitions(sys.argv[1])
+        build_big_dictionary("bigdict.pkl")
+        write_dictionaries("dictionaries.pkl", main_likelihood, main_transitions)
+        write_big_dictionary("bigdict.pkl", big_dictionary)
+    elif (sys.argv[2] == "update"):
         pass
-    with open("bigdict.pkl", "wb") as f:
-        pass
-    build_likelihood(sys.argv[1])
-    build_transitions(sys.argv[1])
-    build_big_dictionary("bigdict.pkl")
-    write_dictionaries("dictionaries.pkl", main_likelihood, main_transitions)
-    write_big_dictionary("bigdict.pkl", big_dictionary)
+    else:
+        print("Incorrect format for build_dictionaries.py.\nFormat is python3 build_dictionaries.py corpus scratch/update")
+###
 
 if __name__ == "__main__":
     main()
