@@ -35,6 +35,7 @@ class Chatbot:
             winner_pos = ""
             winner = float(0)
             candidate = float(0)
+            choices = list()
 
             for next_pos in self.transitions_table[current_pos]:
                 pos_prob = self.transitions_table[current_pos][next_pos]
@@ -49,6 +50,8 @@ class Chatbot:
                             winner = candidate
                             winner_word = word
                             winner_pos = next_pos
+                            #choices[winner_word] = {winner_pos : winner}
+                            choices.insert(0, [winner_word, winner_pos])
             if winner == 0:
                 #TODO: If no word comes after this word.
                 selection = random.choice(self.endwords)
@@ -58,22 +61,17 @@ class Chatbot:
                 stack += winner_word + "."
                 break
 
+            #Take the top 3 highest scored possible words and randomly pick
+            choices = choices[:3]
+            winner_tuple = random.choice(choices)
+            winner_word = winner_tuple[0]
+            winner_pos = winner_tuple[1]
+            
             stack += winner_word + " "
 
             current_word = winner_word
             current_pos = winner_pos
         print(stack)
-
-
-        """choices = list()
-        for possible_word in table["SENT_BREAK"]:
-            for x in range(table["SENT_BREAK"][possible_word]):
-                choices.append(possible_word)
-        word = random.choice(choices)
-        stack += word.capitalize()
-        while (expand == True):
-            break
-        print(stack)"""
     
     def initiate_personal_dictionary(self, fileIn):
         table = dict()
