@@ -1,8 +1,8 @@
 import nltk
 import random
 import string
-import global_vars
 import re
+import global_vars
 from numpy.random import choice
 
 #Chatbot class
@@ -14,10 +14,8 @@ class Chatbot:
         self.likelihood_table, self.transitions_table, self.words_by_pos = self.initiate_personal_dictionary(corpus_tagged)
         self.startwords = self.clean_start_words() #Format: List of tuples of format [word, pos]
 
+    #Generates a tweet. 
     def generate_tweet(self):
-        #nextpos = choice(list(self.transitions_table["SENT_BREAK"].keys()), 1, replace=False, p = list(self.transitions_table["SENT_BREAK"].values()))
-        #^how to choose randomly based off of probability
-
         table = self.likelihood_table
         stack = ""
         expand = True
@@ -47,13 +45,18 @@ class Chatbot:
                         candidate = 0
                     else:
                         if candidate > winner:
+                            if winner_word in self.endwords:
+                                #Attempt to end the tweet if a endword is encountered.
+                                if len(stack) > 70:
+                                    winner_word += "."
+                                    expand = False
+                                else:
+                                    pass
                             winner = candidate
                             winner_word = word
                             winner_pos = next_pos
-                            #choices[winner_word] = {winner_pos : winner}
                             choices.insert(0, [winner_word, winner_pos])
             if winner == 0:
-                #TODO: If no word comes after this word.
                 selection = random.choice(self.endwords)
                 winner_word = selection[0]
                 winner_pos = selection[1]
@@ -61,12 +64,12 @@ class Chatbot:
                 stack += winner_word + "."
                 break
 
-            #Take the top 3 highest scored possible words and randomly pick
-            choices = choices[:3]
+            #Take the highest scored possible words and randomly pick
+            choices = choices[:5]
             winner_tuple = random.choice(choices)
             winner_word = winner_tuple[0]
             winner_pos = winner_tuple[1]
-            
+
             stack += winner_word + " "
 
             current_word = winner_word
@@ -113,17 +116,22 @@ class Chatbot:
                         if prev_pos == "SENT_BREAK":
                             self.add_start_word([word, pos])
 
+                        #If a word ends with punctuation, treat it as an endword
                         if re.match('[.:;-?!]', word[-1]) is not None:
                             word = word[:-1]
                             self.add_stop_word([word, pos])
                             sentence_end_flag = True
                             pos = "SENT_BREAK"
+                        #Parse commas from words
                         if word[-1] == ",":
                             word = word[:-1]
                         if (pos == "URL"):
                             pos = "URL"
                         if (word[:4] == "http"):
                             pos = "URL"
+                        #Normalize non-proper words
+                        if (pos != "NNP" and pos != "NNPS"):
+                            word = word.lower()
 
                         #print(prev_word, "--> ", word)
                         #print(prev_pos, "-->", pos)
@@ -184,7 +192,7 @@ class Chatbot:
 
     def tester(self):
         self.generate_tweet()
-        #for word in self.startwords:
+        #for word in self.endwords:
         #    print(word)
         pass
 
