@@ -30,7 +30,7 @@ class Chatbot:
         #print(current_word, "--> ", current_pos)
 
         stack += (current_word) + " "
-        while (expand == True):
+        while (expand == True and len(stack) < 140):
             winner_word = ""
             winner_pos = ""
             winner = float(0)
@@ -62,7 +62,6 @@ class Chatbot:
 
             current_word = winner_word
             current_pos = winner_pos
-
         print(stack)
 
 
@@ -101,6 +100,9 @@ class Chatbot:
                         sentence_end_flag = False
                         word = element[0]
                         pos = element[1]
+
+                        if all(j in string.punctuation for j in word):
+                            continue
 
                         try:
                             if word in words_by_pos[pos]:
