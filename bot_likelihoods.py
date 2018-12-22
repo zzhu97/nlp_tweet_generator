@@ -6,6 +6,8 @@ import global_vars
 import sys
 import build_dictionaries
 import import_dictionaries
+import re
+from collections import defaultdict
 
 global list_of_likelihood_tables #list of dictionaries
 
@@ -16,7 +18,7 @@ BEGIN_SENT = "BEGIN_SENT"
 END_SENT = "END_SENT"
 
 # Input File: fileIn = tagged version of celebrity's tweets (format of WORD_POS)
-# likelihoodTable[word][POS] = number of occurences as that POS
+# likelihoodTable[POS][word] = number of occurences as that POS
 
 def create_bot_dictionaries(fileIn):
     trainingFile = open(fileIn, 'r') # training corpus
@@ -43,6 +45,9 @@ def create_bot_dictionaries(fileIn):
                 #print("Skipping: ", word[rightIndex-1:rightIndex])
                 posString = word[rightIndex+1:]
                 wordString = word[:rightIndex-1]
+
+                wordString = re.sub('[^0-9a-zA-Z]+', '', wordString)
+
                 #print("POS: ", posString, "Word: ", wordString)
                 if posString not in likelihoodTable:
                     likelihoodTable[posString] = dict()
@@ -58,10 +63,15 @@ def create_bot_dictionaries(fileIn):
                     priorTable[priorPOS][posString] = 1
                 else:
                     priorTable[priorPOS][posString] += 1
+
+                priorPOS = posString
 
             else:
                 posString = word[rightIndex+1:]
                 wordString = word[:rightIndex]
+
+                wordString = re.sub('[^0-9a-zA-Z]+', '', wordString)
+                
                 #print("POS: ", posString, "Word: ", wordString)
                 if posString not in likelihoodTable:
                     likelihoodTable[posString] = dict()
@@ -77,6 +87,8 @@ def create_bot_dictionaries(fileIn):
                     priorTable[priorPOS][posString] = 1
                 else:
                     priorTable[priorPOS][posString] += 1
+
+                priorPOS = posString
 
     for pos in global_vars.big_dictionary:
         if pos not in likelihoodTable:
