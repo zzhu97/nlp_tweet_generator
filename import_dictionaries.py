@@ -1,5 +1,4 @@
-#This is run every time build_dictionaries is run.
-#Retrieves likelihood, transitions, and big dictionary using Pickle library
+#Imports dictionaries from pickle files.
 
 import pickle
 
@@ -11,13 +10,12 @@ import pickle
         print("Could not import dictionaries.pkl. Maybe empty? Empty dictionaries created instead")
         main_likelihood_dict = dict()
         main_transitions_dict = dict()
-"""
 
 
-"""with open("features.pkl", "rb") as f:
+
+with open("features.pkl", "rb") as f:
     try:
         list_of_features = pickle.load(f)
     except:
         print("features.pkl is empty. Empty list created.")
-        list_of_features = list()
-"""
+        list_of_features = list()"""
