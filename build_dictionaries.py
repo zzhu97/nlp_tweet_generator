@@ -36,10 +36,6 @@ def build_likelihood(fileIn):
 ###
 
 ###
-#Build likelihood from Twitter corpus. Format: word_POS
-###
-
-###
 #Build general probabilities dictionary
 def build_transitions(fileIn):
     with open(fileIn, "r") as f:

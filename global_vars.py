@@ -18,6 +18,7 @@ num_of_bots = 0
 main_likelihood = import_dictionaries.main_likelihood_dict
 main_transitions = import_dictionaries.main_transitions_dict
 big_dictionary = import_dictionaries.big_dictionary_dict
+main_features = import_dictionaries.list_of_features
 collection_words = nltk.corpus.wordnet #Collection of words used for synonym matching
 
 ###
@@ -53,7 +54,7 @@ def fill_expansion_table():
 general_lexicon = dict()
 
 def fill_lexicon_table():
-    general_lexicon["NOUN"] = big_dictionary["NN"] + big_dictionary["NNP"] + big_dictionary["NNPS"] + big_dictionary["NNS"] + big_dictionary["WP"] + big_dictionary["PRP"]
+    """general_lexicon["NOUN"] = big_dictionary["NN"] + big_dictionary["NNP"] + big_dictionary["NNPS"] + big_dictionary["NNS"] + big_dictionary["WP"] + big_dictionary["PRP"]
     general_lexicon["DETERMINER"] = big_dictionary["PDT"] + big_dictionary["DT"] + big_dictionary["WDT"]
     general_lexicon["PRP$"] = big_dictionary["PRP$"]
     general_lexicon["POS"] = big_dictionary["POS"]
@@ -62,7 +63,19 @@ def fill_lexicon_table():
     general_lexicon["VERB"] = big_dictionary["VB"] + big_dictionary["VBD"] + big_dictionary["VBG"] + big_dictionary["VBN"] + big_dictionary["VBP"] + big_dictionary["VBZ"]
     general_lexicon["ADVERB"] = big_dictionary["RB"] + big_dictionary["RBR"] + big_dictionary["RBS"]
     general_lexicon["MODAL"] = big_dictionary["MD"]
-    general_lexicon["IN"] = big_dictionary["IN"]
+    general_lexicon["IN"] = big_dictionary["IN"]"""
+    general_lexicon["NOUN"] = dict()
+    general_lexicon["DETERMINER"] = dict()
+    general_lexicon["PRP$"] = dict()
+    general_lexicon["POS"] = dict()
+    general_lexicon["ADJECTIVE"] = dict()
+    general_lexicon["CD"] = dict()
+    general_lexicon["VERB"] = dict()
+    general_lexicon["ADVERB"] = dict()
+    general_lexicon["MODAL"] = dict()
+    general_lexicon["IN"] = dict()
+
+    return general_lexicon
 ###
 
 ###

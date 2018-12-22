@@ -6,18 +6,10 @@ import global_vars
 import sys
 import build_dictionaries
 import import_dictionaries
-from collections import defaultdict
 
 global list_of_likelihood_tables #list of dictionaries
-num_of_bots = global_vars.num_of_bots #number of bots --> number of dictionaries to import. If #bots>#dictionaries, use big_dictionary
 
 list_of_likelihood_tables = import_dictionaries.list_of_likelihood_tables
-
-# nested defaultdict of likelihoodTable[POS][word] = number of occurences
-#likelihoodTable = defaultdict(lambda: defaultdict(lambda: 0))
-
-# nested defaultdict of priorTable[prior word's POS][current word POS] = number of occurences
-#priorTable = defaultdict(lambda: defaultdict(lambda: 0))
 
 # Constants for beginning and ending states
 BEGIN_SENT = "BEGIN_SENT"
@@ -28,8 +20,6 @@ END_SENT = "END_SENT"
 
 def create_bot_dictionaries(fileIn):
     trainingFile = open(fileIn, 'r') # training corpus
-    #likelihoodTable = defaultdict(lambda: defaultdict(lambda: 0)) #DELETE
-    #priorTable = defaultdict(lambda: defaultdict(lambda: 0)) #DELETE
     likelihoodTable = dict()
     priorTable = dict()
 
@@ -121,13 +111,13 @@ def dump_likelihood_tables():
 
 ###
 #Main function
-def main():
+def main(arg1):
     with open("bot_likelihoods.pkl", "wb") as f:
         pass
-    create_bot_dictionaries(sys.argv[1])
+    create_bot_dictionaries(arg1)
     dump_likelihood_tables()
 ###
 
 #Driver
 if __name__ == "__main__":
-    main()
+    main(sys.argv[1])

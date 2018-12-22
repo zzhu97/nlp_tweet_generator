@@ -718,8 +718,15 @@ def buildFile(inF, out):
 				outFile.write(word + '\n')	
 
 
-def main():
+"""def main():
 	buildFile(sys.argv[1], sys.argv[2])
 
 if __name__ == "__main__":
 	main()
+"""
+
+def main(arg1, arg2):
+    buildFile(arg1, arg2)
+
+if __name__ == "__main__":
+    main(sys.argv[1], sys.argv[2])

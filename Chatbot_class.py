@@ -5,6 +5,7 @@ import random
 import string
 import global_vars
 import bot_likelihoods
+import bot_features
 from stop_list import closed_class_stop_words # List of stop words for cosine similarity calculation
 
 big_dictionary = global_vars.big_dictionary
@@ -25,6 +26,7 @@ class Chatbot:
         self.tweets_history = list()
         self.likelihood_table = self.initiate_personal_dictionary()
         self.lexicon = self.initiate_lexicon()
+        self.features = self.initiate_personal_features()
     ###
 
     ###
@@ -60,21 +62,70 @@ class Chatbot:
     #Replaces terminals with words
     #TODO: Expand this to consider features, relevancy, etc... idk
     def choose_words(self, stack):
-        temp_stack = []
-        for terminal in stack:
-            #word = random.choice(general_lexicon[terminal])
-            word = random.choice(self.lexicon[terminal])
-            temp_stack.append(word)
-
         print(stack) #TEST
 
-        return temp_stack
+        """temp_stack = []
+        for terminal in stack:
+            pos = random.choice(list(self.lexicon[terminal].keys()))
+            word = random.choice(self.lexicon[terminal][pos])
+            temp_stack.append(word)
+
+        return temp_stack"""
+        return_stack = []
+
+        prev_pos = ""
+        prev_word = ""
+        next_terminal = ""
+        next_pos = ""
+        next_word = ""
+
+        for terminal in stack:
+            choices = []
+            maximum = 0
+
+            if (prev_pos == ("NN" or "NNP" or "WP" or "PRP" or "POS" or "PRP$") and terminal == "VERB"):
+                pos = random.choice(["VBD", "VBZ"])
+            elif (prev_pos == ("NNS" or "NNPS") and terminal == "VERB"):
+                pos = random.choice(["VBD", "VBG", "VBN", "VBP"])
+            else:
+                pos = random.choice(list(self.lexicon[terminal].keys()))
+
+            for word in self.lexicon[terminal][pos]:
+                try:
+                    feature_list = self.features[word]
+                    score = 0
+                    for feature in feature_list:
+                        if feature == "previous_Word":
+                            if prev_word in feature:
+                                score += 1
+                        elif feature == "previous_POS":
+                            if prev_pos in feature:
+                                score += 1
+                        #TODO: Add more features here
+
+                        if score > 0:
+                            choices.append(word)
+                except:
+                    continue
+
+            if not choices:
+                winner = random.choice(self.lexicon[terminal][pos])
+            else:
+                winner = random.choice(choices)
+
+            prev_word = winner
+            prev_pos = pos
+            return_stack.append(winner)
+
+        return return_stack
     ###
 
     ###
     #Retrieves bot's personal likelihood dictionary.
     def initiate_personal_dictionary(self):
         table = bot_likelihoods.retrieve_likelihood_table()
+
+
         temp = dict()
         for pos in table:
             temp[pos] = list()
@@ -84,19 +135,42 @@ class Chatbot:
     ###
 
     ###
+    #Retrieve's bot's personal features dictionary
+    def initiate_personal_features(self):
+        return bot_features.retrieve_feature_table()
+    ###
+
+    ###
     #Initiate personal lexicon
     def initiate_lexicon(self):
-        lex = dict()
-        lex["NOUN"] = self.likelihood_table["NN"] + self.likelihood_table["NNP"] + self.likelihood_table["NNPS"] + self.likelihood_table["NNS"] + self.likelihood_table["WP"] + self.likelihood_table["PRP"]
-        lex["DETERMINER"] = self.likelihood_table["PDT"] + self.likelihood_table["DT"] + self.likelihood_table["WDT"]
-        lex["PRP$"] = self.likelihood_table["PRP$"]
-        lex["POS"] = self.likelihood_table["POS"]
-        lex["ADJECTIVE"] = self.likelihood_table["JJ"] + self.likelihood_table["JJR"] + big_dictionary["JJS"]
-        lex["CD"] = self.likelihood_table["CD"]
-        lex["VERB"] = self.likelihood_table["VB"] + self.likelihood_table["VBD"] + self.likelihood_table["VBG"] + self.likelihood_table["VBN"] + self.likelihood_table["VBP"] + self.likelihood_table["VBZ"]
-        lex["ADVERB"] = self.likelihood_table["RB"] + self.likelihood_table["RBR"] + self.likelihood_table["RBS"]
-        lex["MODAL"] = self.likelihood_table["MD"]
-        lex["IN"] = self.likelihood_table["IN"]
+        lex = general_lexicon
+        lex["NOUN"]["NN"] = self.likelihood_table["NN"]
+        lex["NOUN"]["NNP"] = self.likelihood_table["NNP"]
+        lex["NOUN"]["NNPS"] = self.likelihood_table["NNPS"]
+        lex["NOUN"]["NNS"] = self.likelihood_table["NNS"]
+        lex["NOUN"]["WP"] = self.likelihood_table["WP"]
+        lex["NOUN"]["PRP"] = self.likelihood_table["PRP"]
+        lex["DETERMINER"]["PDT"] = self.likelihood_table["PDT"]
+        lex["DETERMINER"]["WDT"] = self.likelihood_table["WDT"]
+        lex["DETERMINER"]["DT"] = self.likelihood_table["DT"]
+        lex["PRP$"]["PRP$"] = self.likelihood_table["PRP$"]
+        lex["POS"]["POS"] = self.likelihood_table["POS"]
+        lex["ADJECTIVE"]["JJ"] = self.likelihood_table["JJ"]
+        lex["ADJECTIVE"]["JJR"] = self.likelihood_table["JJR"]
+        lex["ADJECTIVE"]["JJS"] = self.likelihood_table["JJS"]
+        lex["CD"]["CD"] = self.likelihood_table["CD"]
+        lex["VERB"]["VB"] = self.likelihood_table["VB"]
+        lex["VERB"]["VBD"] = self.likelihood_table["VBD"]
+        lex["VERB"]["VBG"] = self.likelihood_table["VBG"]
+        lex["VERB"]["VBN"] = self.likelihood_table["VBN"]
+        lex["VERB"]["VBP"] = self.likelihood_table["VBP"]
+        lex["VERB"]["VBZ"] = self.likelihood_table["VBZ"]
+        lex["ADVERB"]["RB"] = self.likelihood_table["RB"]
+        lex["ADVERB"]["RBR"] = self.likelihood_table["RBR"]
+        lex["ADVERB"]["RBS"] = self.likelihood_table["RBS"]
+        lex["MODAL"]["MD"] = self.likelihood_table["MD"]
+        lex["IN"]["IN"] = self.likelihood_table["IN"]
+
         return lex
     ###
 
@@ -128,8 +202,6 @@ class Chatbot:
     ###
     #Test function
     def tester(self):
-        for pos in self.likelihood_table:
-            print(self.likelihood_table[pos])
         pass
     ###
 #END CHATBOT CLASS

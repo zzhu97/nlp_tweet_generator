@@ -11,7 +11,7 @@ def main():
     global_vars.num_of_bots = sys.argv[1]
     chatbot1 = Chatbot_class.Chatbot("test_bot1") #TEST
     chatbot1.generate_response("test") #TEST
-    #chatbot1.tester()
+    chatbot1.tester()
 
 #Driver function for tweetgen.py
 if __name__ == "__main__":
