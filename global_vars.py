@@ -3,23 +3,18 @@
 import import_dictionaries
 import nltk
 
-global num_of_bots #number of tweetbots
 global big_dictionary
-global main_likelihood
-global main_transitions
-global wordnet_words
 global syntax_rules
 global terminals
 global nonterminals
 global expansion_table
 global general_lexicon
 
-num_of_bots = 0
-main_likelihood = import_dictionaries.main_likelihood_dict
-main_transitions = import_dictionaries.main_transitions_dict
-big_dictionary = import_dictionaries.big_dictionary_dict
-main_features = import_dictionaries.list_of_features
-collection_words = nltk.corpus.wordnet #Collection of words used for synonym matching
+#main_features = import_dictionaries.list_of_features
+
+#TODO: saving dictionaries per bot
+
+
 
 ###
 #Rules for sentence generation and nonterminal breakdown
@@ -28,7 +23,7 @@ syntax_rules = [ ["S", ["NP", "VP"]], \
                 ["NP", ["DetP", "AdjP", "NOUN"], ["DetP", "NOUN"], ["PossP", "AdjP", "NOUN"], ["PossP", "NOUN"], ["AdjP", "NOUN"], ["NOUN"]], \
                 ["DetP", ["DETERMINER"]], \
                 ["PossP", ["PRP$"], ["NOUN", "POS"], ["DETERMINER", "NOUN", "POS"]], \
-                ["AdjP", ["ADJECTIVE"], ["CD"], ["CD", "ADJECTIVE"]], \
+                ["AdjP", ["ADJECTIVE"], ["CD"], ["ADJECTIVE"]], \
                 #Predicate
                 ["VP", ["VERB"], ["VERB", "NP"], ["ADVERB", "VERB"], ["MODAL", "VerbP"], ["VERB", "ADVERB"], ["VERB", "PrepP"]], \
                 ["PrepP", ["IN", "NOUN"]], \
