@@ -1,0 +1,7 @@
+# $1 = input untagged corpus $2 = output, POS-tagged corpus
+java -jar twitie_tag.jar models/gate-EN-twitter.model corpora/untagged/kevinhart4real_tweets.txt > corpora/tagged/kevinhart4real_tweets_tagged.txt
+java -jar twitie_tag.jar models/gate-EN-twitter.model corpora/untagged/oprah_tweets.txt > corpora/tagged/oprah_tweets_tagged.txt
+java -jar twitie_tag.jar models/gate-EN-twitter.model corpora/untagged/KimKardashian_tweets.txt > corpora/tagged/kimkardashian_tweets_tagged.txt
+java -jar twitie_tag.jar models/gate-EN-twitter.model corpora/untagged/billgates_tweets.txt > corpora/tagged/billgates_tweets_tagged.txt
+java -jar twitie_tag.jar models/gate-EN-twitter.model corpora/untagged/elonmusk_tweets.txt > corpora/tagged/elonmusk_tweets_tagged.txt
+java -jar twitie_tag.jar models/gate-EN-twitter.model corpora/untagged/nasa_tweets.txt > corpora/tagged/nasa_tweets_tagged.txt
